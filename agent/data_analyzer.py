@@ -70,12 +70,13 @@ class DataAnalyzer:
         
         summary = {'by_platform': {}, 'overall': {}}
         
-        grouped = self.df.group_by(self.platform_col)
-        
-        for (platform,), group in grouped:
-            platform_stats = {'count': int(len(group))}
+        platforms = self.df[self.platform_col].unique().to_list()
+
+for platform in platforms:
+    group = self.df.filter(pl.col(self.platform_col) == platform)
+    platform_stats = {'count': int(len(group))}
             
-            for metric_name, col_name in self.metric_cols.items():
+for metric_name, col_name in self.metric_cols.items():
                 if col_name in group.columns:
                     platform_stats[metric_name] = {
                         'mean': float(round(group[col_name].mean(), 2)),
