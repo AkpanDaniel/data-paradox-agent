@@ -7,7 +7,7 @@ sys.path.insert(0, 'agent')
 
 from challenge_generator import ChallengeGenerator
 
-# Try to import DataAnalyzer (requires pandas)
+# Try to import DataAnalyzer (now uses Polars)
 try:
     from data_analyzer import DataAnalyzer
     analyzer = DataAnalyzer()
@@ -102,23 +102,103 @@ def home():
             
             .upload-section {
                 background: #f8f9fa;
-                border: 2px dashed #ccc;
+                border: 2px dashed #667eea;
                 border-radius: 15px;
                 padding: 30px;
                 margin-bottom: 30px;
                 text-align: center;
-                opacity: 0.5;
+                transition: all 0.3s;
+            }
+            
+            .upload-section:hover {
+                border-color: #764ba2;
+                background: #f0f0f0;
             }
             
             .upload-section h3 {
-                color: #999;
+                color: #333;
                 margin-bottom: 15px;
                 font-size: 1.3em;
             }
             
             .upload-section p {
-                color: #999;
+                color: #666;
                 margin-bottom: 20px;
+            }
+            
+            .file-input-wrapper {
+                position: relative;
+                display: inline-block;
+            }
+            
+            .file-input-wrapper input[type=file] {
+                position: absolute;
+                opacity: 0.01;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+                z-index: 10;
+                left: 0;
+                top: 0;
+            }
+            
+            .upload-btn {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 15px 40px;
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 1.1em;
+                cursor: pointer;
+                display: inline-block;
+                transition: transform 0.2s;
+            }
+            
+            .upload-btn:hover {
+                transform: translateY(-2px);
+            }
+            
+            .data-summary {
+                background: #e8f5e9;
+                border-left: 4px solid #4caf50;
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                display: none;
+            }
+            
+            .data-summary.active {
+                display: block;
+            }
+            
+            .data-summary h4 {
+                color: #2e7d32;
+                margin-bottom: 10px;
+            }
+            
+            .platform-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin-top: 15px;
+            }
+            
+            .platform-card {
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            
+            .platform-card h5 {
+                color: #667eea;
+                margin-bottom: 8px;
+            }
+            
+            .platform-card p {
+                color: #666;
+                font-size: 0.9em;
+                margin: 3px 0;
             }
             
             .comparison-grid {
@@ -245,6 +325,16 @@ def home():
                 background: #667eea;
                 color: white;
                 border-color: #667eea;
+            }
+            
+            .verification-badge {
+                display: inline-block;
+                padding: 8px 15px;
+                background: #e8f5e9;
+                color: #2e7d32;
+                border-radius: 5px;
+                font-weight: 600;
+                margin-bottom: 15px;
             }
             
             #results {
@@ -455,7 +545,7 @@ def home():
         <div class="container">
             <div class="header">
                 <h1>🔍 Data Paradox Agent</h1>
-                <p>Challenge your analysis — detect fallacies before they cost you</p>
+                <p>Challenge your analysis — with your actual data</p>
             </div>
             
             <div class="mode-toggle">
@@ -465,15 +555,24 @@ def home():
             
             <div class="main-card">
                 <div class="upload-section">
-                    <h3>📊 CSV Upload (Currently Unavailable)</h3>
-                    <p>CSV validation disabled in this deployment. Core fallacy detection still works!</p>
+                    <h3>📊 Upload Your Dataset (Optional)</h3>
+                    <p>Upload your marketing data CSV to validate claims against actual data</p>
+                    <div class="file-input-wrapper">
+                        <div class="upload-btn">📁 Choose CSV File</div>
+                        <input type="file" id="csvFile" accept=".csv" onchange="handleFileUpload(event)">
+                    </div>
+                </div>
+                
+                <div id="dataSummary" class="data-summary">
+                    <h4>✅ Dataset Loaded Successfully</h4>
+                    <div id="summaryContent"></div>
                 </div>
                 
                 <div id="singleMode" class="single-mode">
                     <label for="claim">Paste Your Analytical Claim:</label>
                     <textarea 
                         id="claim" 
-                        placeholder="Example: TikTok has ROAS of 9.54, highest in dataset. We should reallocate 60% of budget..."
+                        placeholder="Example: TikTok has ROAS of 9.54, highest in my dataset. We should reallocate 60% of budget..."
                     ></textarea>
                     
                     <div class="button-container">
@@ -525,6 +624,7 @@ def home():
                 3: "Across the 1,800 campaigns, we found that YouTube and Display ads have a significantly higher ROAS than Search ads when using a 30-day view-through attribution window. Therefore, we should transition the majority of the Search budget to Video to avoid the high competition tax on Search."
             };
             
+            let datasetLoaded = false;
             let currentMode = 'single';
             
             function switchMode(mode) {
@@ -567,6 +667,64 @@ def home():
                 document.getElementById('results').innerHTML = '';
             }
             
+            async function handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const summaryDiv = document.getElementById('dataSummary');
+                const summaryContent = document.getElementById('summaryContent');
+                summaryDiv.classList.add('active');
+                summaryContent.innerHTML = '<p>⏳ Loading and analyzing your data...</p>';
+                
+                try {
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        datasetLoaded = true;
+                        displayDataSummary(data);
+                    } else {
+                        summaryContent.innerHTML = `<p style="color: red;">❌ ${data.error}</p>`;
+                    }
+                } catch (error) {
+                    summaryContent.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+                }
+            }
+            
+            function displayDataSummary(data) {
+                const summaryContent = document.getElementById('summaryContent');
+                
+                let html = `
+                    <p><strong>Rows:</strong> ${data.rows} campaigns</p>
+                    <p><strong>Platforms:</strong> ${Object.keys(data.summary.by_platform).join(', ')}</p>
+                    <div class="platform-stats">
+                `;
+                
+                for (const [platform, stats] of Object.entries(data.summary.by_platform)) {
+                    html += `
+                        <div class="platform-card">
+                            <h5>${platform}</h5>
+                            <p><strong>${stats.count}</strong> campaigns</p>
+                    `;
+                    
+                    if (stats.roas) html += `<p>ROAS: ${stats.roas.mean} avg</p>`;
+                    if (stats.ctr) html += `<p>CTR: ${stats.ctr.mean}% avg</p>`;
+                    if (stats.cpc) html += `<p>CPC: $${stats.cpc.mean} avg</p>`;
+                    
+                    html += `</div>`;
+                }
+                
+                html += `</div>`;
+                summaryContent.innerHTML = html;
+            }
+            
             async function analyzeClaim() {
                 const claim = document.getElementById('claim').value.trim();
                 
@@ -585,7 +743,10 @@ def home():
                     const response = await fetch('/api/analyze', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ claim: claim })
+                        body: JSON.stringify({ 
+                            claim: claim,
+                            validate_data: datasetLoaded
+                        })
                     });
                     
                     const data = await response.json();
@@ -616,7 +777,11 @@ def home():
                     const response = await fetch('/api/compare', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ claim_a: claimA, claim_b: claimB })
+                        body: JSON.stringify({ 
+                            claim_a: claimA,
+                            claim_b: claimB,
+                            validate_data: datasetLoaded
+                        })
                     });
                     
                     const data = await response.json();
@@ -631,6 +796,18 @@ def home():
             function displayResults(data) {
                 const resultsDiv = document.getElementById('results');
                 let html = '';
+                
+                if (data.data_verification && data.data_verification.verified) {
+                    html += '<div class="main-card"><div class="verification-badge">✅ DATA VERIFIED</div>';
+                    
+                    for (const v of data.data_verification.verifications) {
+                        if (v.type === 'metric_claim' && v.matching_platforms.length > 0) {
+                            const match = v.matching_platforms[0];
+                            html += `<p><strong>${v.metric.toUpperCase()}:</strong> You claimed ${v.claimed_value}. Found ${match.actual_value} ${match.match_type} for ${match.platform}. ✅</p>`;
+                        }
+                    }
+                    html += '</div>';
+                }
                 
                 if (data.status === 'no_issues') {
                     html += '<div class="main-card"><h2 style="color: #27ae60;">✅ No Obvious Issues</h2><p>' + data.message + '</p></div>';
@@ -772,7 +949,7 @@ def home():
 def upload_csv():
     """Handle CSV file upload."""
     if not DATA_UPLOAD_ENABLED:
-        return jsonify({'success': False, 'error': 'CSV upload not available in this deployment'}), 503
+        return jsonify({'success': False, 'error': 'CSV upload not available'}), 503
     
     if 'file' not in request.files:
         return jsonify({'success': False, 'error': 'No file provided'}), 400
@@ -794,11 +971,17 @@ def analyze():
     """API endpoint to analyze claims."""
     data = request.get_json()
     claim = data.get('claim', '')
+    validate_data = data.get('validate_data', False)
     
     if not claim:
         return jsonify({'error': 'No claim provided'}), 400
     
     response = generator.generate_challenges(claim)
+    
+    if validate_data and analyzer and analyzer.df is not None:
+        validation = analyzer.validate_claim(claim)
+        response['data_verification'] = validation
+    
     return jsonify(response)
 
 @app.route('/api/compare', methods=['POST'])
@@ -807,11 +990,17 @@ def compare():
     data = request.get_json()
     claim_a = data.get('claim_a', '')
     claim_b = data.get('claim_b', '')
+    validate_data = data.get('validate_data', False)
     
     if not claim_a or not claim_b:
         return jsonify({'error': 'Both claims required'}), 400
     
     comparison = generator.compare_claims(claim_a, claim_b)
+    
+    if validate_data and analyzer and analyzer.df is not None:
+        comparison['claim_a']['data_verification'] = analyzer.validate_claim(claim_a)
+        comparison['claim_b']['data_verification'] = analyzer.validate_claim(claim_b)
+    
     return jsonify(comparison)
 
 if __name__ == '__main__':
@@ -820,7 +1009,7 @@ if __name__ == '__main__':
     print("=" * 60)
     print("\n✅ Server starting...")
     print("📱 Open your browser and go to: http://localhost:5000")
-    print("\n💡 Fallacy Detection & Comparison Enabled!")
+    print("\n💡 CSV Upload & Comparison Enabled!")
     print("\n Press Ctrl+C to stop the server\n")
     print("=" * 60 + "\n")
     
