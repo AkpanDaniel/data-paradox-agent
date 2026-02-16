@@ -1,0 +1,193 @@
+{
+  "incremental_return_fallacy": {
+    "name": "Incremental Return Fallacy",
+    "description": "Assumes average performance of top performers will hold when scaling budget",
+    "triggers": {
+      "keywords": ["reallocate", "reallocation", "shift", "move", "increase budget", "scale", "scaling", "allocate more"],
+      "metrics": ["ROAS", "ROI", "CPA", "CTR", "conversion rate", "efficiency"],
+      "patterns": ["budget", "spend", "top perform", "high perform", "underperform"]
+    },
+    "challenges": {
+      "constructive": [
+        "Have you tested what happens to ROAS when you increase spend on these campaigns by 20-30%?",
+        "What's the incremental ROAS of the next dollar spent, not just the average?",
+        "Have you examined budget elasticity curves to see where diminishing returns begin?"
+      ],
+      "direct": [
+        "High average ROAS often indicates saturated demand or low-hanging fruit. Marginal ROAS typically drops 30-50% when scaling.",
+        "This recommendation assumes linear scaling, which rarely holds in auction-based advertising where costs rise with competition.",
+        "The campaigns you're moving budget TO are likely already optimized for their current spend level. Additional budget usually hits diminishing returns immediately."
+      ],
+      "missing_data": [
+        "Incremental ROAS tests (holdout experiments or geo-lift studies)",
+        "Budget elasticity curves showing ROAS at different spend levels",
+        "Historical data on previous budget increases and their outcomes"
+      ],
+      "alternatives": [
+        "High ROAS might indicate restrictive targeting that can't scale without quality loss",
+        "These campaigns might be capturing existing demand (brand searches, retargeting) that won't grow proportionally with budget",
+        "Low-ROAS campaigns might be upper-funnel investments that feed conversions in high-ROAS campaigns (multi-touch attribution)"
+      ]
+    }
+  },
+
+  "attribution_inflation": {
+    "name": "Attribution Inflation",
+    "description": "Overly generous attribution windows claim credit for conversions that would have happened anyway",
+    "triggers": {
+      "keywords": ["view-through", "attribution", "30-day", "7-day", "assisted conversion", "multi-touch", "last-click"],
+      "metrics": ["ROAS", "conversion", "ROI", "attributed"],
+      "patterns": ["window", "model", "credit", "YouTube", "Display", "upper funnel", "awareness"]
+    },
+    "challenges": {
+      "constructive": [
+        "What attribution model are you using? Could it be inflating the contribution of upper-funnel channels?",
+        "Have you run incrementality tests (geo holdouts or conversion lift studies) to validate these aren't just correlated conversions?",
+        "What happens if you switch to a shorter attribution window or last-click model?"
+      ],
+      "direct": [
+        "View-through attribution (especially 30-day windows) is notorious for claiming credit for existing demand. Upper-funnel channels often 'steal' credit from direct traffic and search.",
+        "Without holdout testing, you're likely measuring correlation with purchase intent, not causation of incremental purchases.",
+        "These platforms have every incentive to use generous attribution models that inflate their reported performance."
+      ],
+      "missing_data": [
+        "Incrementality test results (geo-based holdout experiments)",
+        "Comparison of performance across multiple attribution models",
+        "Organic/direct traffic trends before and after campaign launch"
+      ],
+      "alternatives": [
+        "These channels might be capturing users who already decided to buy (exposure correlation, not influence)",
+        "The true incremental contribution might be 40-60% lower than the attributed ROAS suggests",
+        "Search and direct traffic might drop if you pause these campaigns, revealing they were stealing credit"
+      ]
+    }
+  },
+
+  "selection_bias": {
+    "name": "Selection Bias in Traffic Quality",
+    "description": "High performance metrics from self-selected, high-intent audiences are mistaken for broad scalability",
+    "triggers": {
+      "keywords": ["CTR", "click-through", "engagement", "retargeting", "remarketing", "brand", "navigational"],
+      "metrics": ["CTR", "engagement rate", "click rate", "CPA"],
+      "patterns": ["creative", "audience", "campaign type", "quality"]
+    },
+    "challenges": {
+      "constructive": [
+        "What percentage of this traffic comes from retargeting or branded search terms?",
+        "Have you segmented performance by new vs. returning users?",
+        "Does this CTR hold when you expand to cold audiences or non-brand terms?"
+      ],
+      "direct": [
+        "Ultra-high CTRs are often found in retargeting or navigational brand queries where users already intended to convert. This is symptom, not cause.",
+        "You're measuring the quality of audience selection, not creative effectiveness.",
+        "Solving acquisition challenges requires looking at incremental lift from cold audiences, not efficiency metrics inflated by existing demand."
+      ],
+      "missing_data": [
+        "Performance segmented by audience type (cold vs. warm vs. retargeting)",
+        "New user acquisition metrics vs. returning user metrics",
+        "Campaign performance on non-brand, non-retargeting traffic"
+      ],
+      "alternatives": [
+        "High CTR indicates you're targeting people who already want your product, not that your creative is persuasive",
+        "The real test is whether CTR holds when you remove retargeting and brand terms from the mix",
+        "Low CTR campaigns on cold audiences might be more valuable for actual growth than high-CTR retargeting"
+      ]
+    }
+  },
+
+  "correlation_causation": {
+    "name": "Correlation vs Causation Confusion",
+    "description": "Observing a relationship between two variables and assuming one causes the other",
+    "triggers": {
+      "keywords": ["correlate", "correlation", "relationship", "linked to", "associated with", "connected"],
+      "metrics": ["any metric"],
+      "patterns": ["result in", "lead to", "cause", "drive", "impact"]
+    },
+    "challenges": {
+      "constructive": [
+        "What evidence do you have that this is causation rather than just correlation?",
+        "Could there be a third variable driving both outcomes?",
+        "Have you considered reverse causality (B causing A instead of A causing B)?"
+      ],
+      "direct": [
+        "Correlation does not equal causation. Third variables, reverse causality, or coincidence might explain this pattern.",
+        "Without controlled experiments, you cannot establish causal direction.",
+        "Many spurious correlations exist in marketing data due to seasonality, external events, or shared underlying factors."
+      ],
+      "missing_data": [
+        "Controlled experiments (A/B tests) isolating the variable in question",
+        "Analysis controlling for confounding variables",
+        "Time-series analysis checking if changes in A precede changes in B"
+      ],
+      "alternatives": [
+        "Both variables might be driven by a third factor (e.g., seasonality, market conditions)",
+        "The causality might be reversed (B influences A, not A influences B)",
+        "This might be a spurious correlation with no causal relationship at all"
+      ]
+    }
+  },
+
+  "survivorship_bias": {
+    "name": "Survivorship Bias",
+    "description": "Drawing conclusions from successful cases while ignoring failures that followed the same strategy",
+    "triggers": {
+      "keywords": ["top perform", "best", "high perform", "success", "winner", "leading"],
+      "metrics": ["any metric"],
+      "patterns": ["should follow", "learn from", "replicate", "adopt strategy"]
+    },
+    "challenges": {
+      "constructive": [
+        "Have you analyzed campaigns that used the same strategy but failed?",
+        "What percentage of campaigns using this approach actually succeeded?",
+        "Are you only looking at survivors while ignoring the failures?"
+      ],
+      "direct": [
+        "You're only analyzing the winners. Survivorship bias means you're ignoring all the campaigns that tried the same approach and failed.",
+        "Without knowing the failure rate, you can't assess whether this strategy is actually repeatable or just got lucky.",
+        "Successful outliers are often explained by factors beyond the obvious strategy (timing, competition, market conditions)."
+      ],
+      "missing_data": [
+        "Analysis of failed campaigns that attempted similar strategies",
+        "Success rate across all campaigns using this approach",
+        "Comparison of successful vs unsuccessful campaigns with similar characteristics"
+      ],
+      "alternatives": [
+        "These top performers might have succeeded despite the strategy, not because of it",
+        "Luck, timing, or external factors might explain success better than the strategy itself",
+        "The failure rate might be 80%, making this a risky strategy despite visible winners"
+      ]
+    }
+  },
+
+  "confounding_variables": {
+    "name": "Confounding Variables",
+    "description": "Failing to account for variables that influence both the action and the outcome",
+    "triggers": {
+      "keywords": ["because", "due to", "caused by", "result of", "driven by"],
+      "metrics": ["any metric"],
+      "patterns": ["compare", "vs", "versus", "better than", "worse than"]
+    },
+    "challenges": {
+      "constructive": [
+        "What other variables might be influencing this relationship?",
+        "Have you controlled for factors like audience, timing, seasonality, or market conditions?",
+        "Could the groups you're comparing differ in ways beyond what you're measuring?"
+      ],
+      "direct": [
+        "You're not accounting for confounding variables. The groups you're comparing likely differ in multiple ways beyond your primary variable.",
+        "Without controlling for confounders, you can't isolate the true effect of the factor you're analyzing.",
+        "Multivariate factors like audience quality, timing, product mix, or external events might explain the difference better than your hypothesis."
+      ],
+      "missing_data": [
+        "Controlled analysis isolating the variable of interest",
+        "Data on potential confounding factors (audience demographics, timing, seasonality)",
+        "Regression analysis or matching methods to control for confounders"
+      ],
+      "alternatives": [
+        "The difference might be driven by audience composition, not the strategy itself",
+        "Timing or seasonality might explain the performance gap",
+        "External factors (competitors, market trends, product changes) might be the real driver"
+      ]
+    }
+  }
+}
