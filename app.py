@@ -5,13 +5,18 @@ import os
 sys.path.insert(0, 'agent')
 
 from challenge_generator import ChallengeGenerator
-from data_analyzer import DataAnalyzer
+try:
+    from data_analyzer import DataAnalyzer
+    analyzer = DataAnalyzer()
+    DATA_UPLOAD_ENABLED = True
+except ImportError:
+    analyzer = None
+    DATA_UPLOAD_ENABLED = False
 
 app = Flask(__name__)
 CORS(app)
 
 generator = ChallengeGenerator()
-analyzer = DataAnalyzer()
 
 @app.route('/')
 def home():
@@ -945,9 +950,10 @@ def home():
 @app.route('/api/upload', methods=['POST'])
 def upload_csv():
     """Handle CSV file upload."""
-    if 'file' not in request.files:
-        return jsonify({'success': False, 'error': 'No file provided'}), 400
-    
+        if not DATA_UPLOAD_ENABLED:
+        return jsonify({'success': False, 'error': 'CSV upload not available in this deployment'}), 503
+
+
     file = request.files['file']
     if file.filename == '':
         return jsonify({'success': False, 'error': 'No file selected'}), 400
