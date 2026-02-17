@@ -22,6 +22,18 @@ The Data Paradox Agent performs **dual validation**:
 
 ---
 
+## 📸 Functionality Preview
+
+### 1. Analysis Dashboard
+![Analysis Dashboard](assets/screenshot_1.png)
+
+### 2. Fallacy Detection
+![Fallacy Detection](assets/screenshot_2.png)
+![Deep Dive](assets/screenshot_3.png)
+![Upload Interface](assets/screenshot_4.png)
+
+---
+
 ## Why This Matters
 
 **The Problem:** Most analysts make recommendations based on true-but-misleading data:
@@ -176,6 +188,23 @@ Built by **Akpan Daniel** as a portfolio project demonstrating:
 
 **Timeline:** 2 days (February 15-16, 2026)
 
+## Data Requirements
+
+**Optimized for marketing campaign data.** Your CSV should include:
+
+**Required Column (one of):**
+- `platform`, `channel`, `ad_platform`, `source`, or `medium`
+
+**Optional Metrics (detected automatically):**
+- ROAS, CTR, CPC, CPA
+- Conversions, Spend, Revenue
+
+**Example Data Structure:**
+| Platform    | ROAS | CTR  | CPC  |
+|-------------|------|------|------|
+| Google Ads  | 4.11 | 3.2% | $2.15|
+| Meta Ads    | 6.92 | 2.1% | $1.32|
+| TikTok Ads  | 9.54 | 5.5% | $1.01|
 ---
 
 ##  Contact
