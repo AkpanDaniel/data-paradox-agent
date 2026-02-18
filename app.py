@@ -30,7 +30,7 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Data Paradox Agent</title>
+        <title>Data Paradox Agent - Challenge Your Marketing Analytics</title>
         <style>
             * {
                 margin: 0;
@@ -53,19 +53,55 @@ def home():
             .header {
                 text-align: center;
                 color: white;
-                margin-bottom: 40px;
-                padding: 40px 20px;
+                margin-bottom: 30px;
+                padding: 40px 20px 20px 20px;
             }
             
             .header h1 {
                 font-size: 3em;
-                margin-bottom: 10px;
+                margin-bottom: 15px;
                 text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
             }
             
-            .header p {
-                font-size: 1.2em;
-                opacity: 0.9;
+            .header .tagline {
+                font-size: 1.3em;
+                opacity: 0.95;
+                margin-bottom: 20px;
+            }
+            
+            .value-prop {
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 25px;
+                margin: 20px auto 30px auto;
+                max-width: 800px;
+                color: white;
+                line-height: 1.6;
+                font-size: 1.1em;
+            }
+            
+            .badges {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+                margin-top: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .badge {
+                background: white;
+                color: #667eea;
+                padding: 8px 15px;
+                border-radius: 20px;
+                font-weight: 600;
+                font-size: 0.9em;
+                text-decoration: none;
+                transition: transform 0.2s;
+            }
+            
+            .badge:hover {
+                transform: translateY(-2px);
             }
             
             .mode-toggle {
@@ -305,26 +341,29 @@ def home():
             }
             
             .examples h3 {
-                margin-bottom: 10px;
+                margin-bottom: 15px;
                 color: #333;
             }
             
             .example-btn {
                 display: inline-block;
                 margin: 5px;
-                padding: 8px 15px;
+                padding: 10px 20px;
                 background: white;
-                border: 1px solid #ddd;
-                border-radius: 5px;
+                border: 2px solid #667eea;
+                border-radius: 8px;
                 cursor: pointer;
-                font-size: 0.9em;
+                font-size: 0.95em;
+                font-weight: 600;
                 transition: all 0.2s;
+                color: #667eea;
             }
             
             .example-btn:hover {
                 background: #667eea;
                 color: white;
-                border-color: #667eea;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
             }
             
             .verification-badge {
@@ -539,13 +578,48 @@ def home():
                 color: #333;
                 margin-bottom: 10px;
             }
+            
+            .footer {
+                text-align: center;
+                color: white;
+                padding: 30px 20px;
+                margin-top: 50px;
+                opacity: 0.9;
+            }
+            
+            .footer a {
+                color: white;
+                text-decoration: none;
+                font-weight: 600;
+                border-bottom: 2px solid rgba(255,255,255,0.3);
+            }
+            
+            .footer a:hover {
+                border-bottom-color: white;
+            }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
                 <h1>🔍 Data Paradox Agent</h1>
-                <p>Challenge your analysis — with your actual data</p>
+                <p class="tagline">Challenge your marketing analytics — with your actual data</p>
+                
+                <div class="value-prop">
+                    <strong>Stop trusting misleading marketing metrics.</strong><br>
+                    Upload your campaign CSV → Make a claim → Get fact-checked AND logic-checked instantly.<br>
+                    <em>Most analytics tools confirm your bias. This one challenges it.</em>
+                </div>
+                
+                <div class="badges">
+                    <a href="https://github.com/AkpanDaniel/data-paradox-agent" target="_blank" class="badge">
+                        ⭐ View on GitHub
+                    </a>
+                    <a href="https://github.com/AkpanDaniel/data-paradox-agent" target="_blank" class="badge">
+                        📖 Read Documentation
+                    </a>
+                    <span class="badge">🚀 100% Free & Open Source</span>
+                </div>
             </div>
             
             <div class="mode-toggle">
@@ -555,7 +629,7 @@ def home():
             
             <div class="main-card">
                 <div class="upload-section">
-                    <h3>📊 Upload Your Dataset (Optional)</h3>
+                    <h3>📊 Upload Your Dataset (Optional but Recommended)</h3>
                     <p>Upload your marketing data CSV to validate claims against actual data</p>
                     <div class="file-input-wrapper">
                         <div class="upload-btn">📁 Choose CSV File</div>
@@ -607,14 +681,19 @@ def home():
                 </div>
                 
                 <div class="examples">
-                    <h3>📝 Try Examples:</h3>
-                    <button class="example-btn" onclick="loadExample(1)">ROAS Reallocation</button>
-                    <button class="example-btn" onclick="loadExample(2)">CTR-CPA Correlation</button>
-                    <button class="example-btn" onclick="loadExample(3)">Platform Attribution</button>
+                    <h3>📝 Try These Examples (Click to Auto-Analyze):</h3>
+                    <button class="example-btn" onclick="loadExampleAndAnalyze(1)">🚀 ROAS Reallocation</button>
+                    <button class="example-btn" onclick="loadExampleAndAnalyze(2)">📈 CTR-CPA Correlation</button>
+                    <button class="example-btn" onclick="loadExampleAndAnalyze(3)">🎯 Platform Attribution</button>
                 </div>
             </div>
             
             <div id="results"></div>
+            
+            <div class="footer">
+                Built with 💜 by <a href="https://github.com/AkpanDaniel" target="_blank">Akpan Daniel</a><br>
+                © 2026 Data Paradox Agent | <a href="https://github.com/AkpanDaniel/data-paradox-agent" target="_blank">Open Source on GitHub</a>
+            </div>
         </div>
         
         <script>
@@ -655,6 +734,11 @@ def home():
                 } else {
                     document.getElementById('claimA').value = examples[num];
                 }
+            }
+            
+            function loadExampleAndAnalyze(num) {
+                loadExample(num);
+                setTimeout(() => analyzeClaim(), 100);
             }
             
             function clearAll() {
@@ -1002,6 +1086,11 @@ def compare():
         comparison['claim_b']['data_verification'] = analyzer.validate_claim(claim_b)
     
     return jsonify(comparison)
+
+@app.route('/health')
+def health():
+    """Health check endpoint for Render"""
+    return jsonify({'status': 'healthy', 'version': '1.0.0'}), 200
 
 if __name__ == '__main__':
     print("\n" + "=" * 60)
