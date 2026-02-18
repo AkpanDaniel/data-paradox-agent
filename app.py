@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sys
 import os
@@ -16,10 +16,15 @@ except ImportError:
     analyzer = None
     DATA_UPLOAD_ENABLED = False
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 CORS(app)
 
 generator = ChallengeGenerator()
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    """Serve static files"""
+    return send_from_directory('static', filename)
 
 @app.route('/')
 def home():
@@ -102,6 +107,62 @@ def home():
             
             .badge:hover {
                 transform: translateY(-2px);
+            }
+            
+            .demo-section {
+                max-width: 900px;
+                margin: 30px auto;
+                background: white;
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+            
+            .demo-section h3 {
+                text-align: center;
+                color: #667eea;
+                margin-bottom: 15px;
+            }
+            
+            .demo-section video {
+                width: 100%;
+                border-radius: 10px;
+            }
+            
+            .how-it-works {
+                max-width: 900px;
+                margin: 20px auto;
+                background: rgba(255,255,255,0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 25px;
+                color: white;
+            }
+            
+            .how-it-works h3 {
+                text-align: center;
+                margin-bottom: 20px;
+                font-size: 1.4em;
+            }
+            
+            .steps-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            
+            .step {
+                text-align: center;
+            }
+            
+            .step-number {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+            
+            .step-desc {
+                opacity: 0.9;
+                font-size: 0.9em;
             }
             
             .mode-toggle {
@@ -619,6 +680,37 @@ def home():
                         📖 Read Documentation
                     </a>
                     <span class="badge">🚀 100% Free & Open Source</span>
+                </div>
+            </div>
+            
+            <!-- Demo Video Section -->
+            <div class="demo-section">
+                <h3>📺 See It In Action (20 seconds)</h3>
+                <video autoplay loop muted playsinline>
+                    <source src="/static/0218.mp4" type="video/mp4">
+                    Your browser doesn't support video.
+                </video>
+            </div>
+            
+            <!-- How It Works -->
+            <div class="how-it-works">
+                <h3>⚡ How It Works</h3>
+                <div class="steps-grid">
+                    <div class="step">
+                        <div class="step-number">1️⃣</div>
+                        <strong>Upload Your CSV</strong><br>
+                        <span class="step-desc">Or try without data</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2️⃣</div>
+                        <strong>Make a Claim</strong><br>
+                        <span class="step-desc">Or click an example</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3️⃣</div>
+                        <strong>Get Challenged</strong><br>
+                        <span class="step-desc">See logical risks instantly</span>
+                    </div>
                 </div>
             </div>
             
