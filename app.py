@@ -37,15 +37,43 @@ def home():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Data Paradox Agent - Challenge Your Marketing Analytics</title>
         <style>
+            /* Theme Variables */
+            :root {
+                --bg-gradient-start: #667eea;
+                --bg-gradient-end: #764ba2;
+                --card-bg: white;
+                --text-primary: #333;
+                --text-secondary: #666;
+                --border-color: #e0e0e0;
+                --shadow: rgba(0,0,0,0.1);
+                --input-bg: white;
+                --upload-bg: #f8f9fa;
+                --upload-border: #667eea;
+            }
+
+            [data-theme="dark"] {
+                --bg-gradient-start: #1a1a2e;
+                --bg-gradient-end: #16213e;
+                --card-bg: #0f3460;
+                --text-primary: #eee;
+                --text-secondary: #bbb;
+                --border-color: #2a2a40;
+                --shadow: rgba(0,0,0,0.3);
+                --input-bg: #1a2332;
+                --upload-bg: #1a2332;
+                --upload-border: #667eea;
+            }
+            
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
+                transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
             }
             
             body {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
                 min-height: 100vh;
                 padding: 20px;
             }
@@ -53,6 +81,30 @@ def home():
             .container {
                 max-width: 1400px;
                 margin: 0 auto;
+            }
+            
+            .theme-toggle {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(255,255,255,0.2);
+                backdrop-filter: blur(10px);
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                cursor: pointer;
+                font-size: 1.5em;
+                transition: all 0.3s;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .theme-toggle:hover {
+                transform: scale(1.1);
+                background: rgba(255,255,255,0.3);
             }
             
             .header {
@@ -147,10 +199,10 @@ def home():
             .demo-section {
                 max-width: 900px;
                 margin: 30px auto;
-                background: white;
+                background: var(--card-bg);
                 border-radius: 15px;
                 padding: 20px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                box-shadow: 0 10px 30px var(--shadow);
             }
             
             .demo-section h3 {
@@ -225,39 +277,38 @@ def home():
             }
             
             .main-card {
-                background: white;
+                background: var(--card-bg);
                 border-radius: 20px;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                box-shadow: 0 20px 60px var(--shadow);
                 padding: 40px;
                 margin-bottom: 30px;
             }
             
             .upload-section {
-                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-                border: 2px dashed #667eea;
+                background: var(--upload-bg);
+                border: 2px dashed var(--upload-border);
                 border-radius: 15px;
                 padding: 30px;
                 margin-bottom: 30px;
                 text-align: center;
                 transition: all 0.3s;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+                box-shadow: 0 5px 15px var(--shadow);
             }
             
             .upload-section:hover {
                 border-color: #764ba2;
-                background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+                box-shadow: 0 8px 20px var(--shadow);
             }
             
             .upload-section h3 {
-                color: #333;
+                color: var(--text-primary);
                 margin-bottom: 15px;
                 font-size: 1.3em;
             }
             
             .upload-section p {
-                color: #666;
+                color: var(--text-secondary);
                 margin-bottom: 20px;
             }
             
@@ -301,7 +352,7 @@ def home():
                 margin-bottom: 20px;
                 border-radius: 10px;
                 display: none;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+                box-shadow: 0 3px 10px var(--shadow);
             }
             
             .data-summary.active {
@@ -324,7 +375,7 @@ def home():
                 background: white;
                 padding: 15px;
                 border-radius: 8px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 5px var(--shadow);
             }
             
             .platform-card h5 {
@@ -372,19 +423,21 @@ def home():
                 font-size: 1.1em;
                 font-weight: 600;
                 margin-bottom: 10px;
-                color: #333;
+                color: var(--text-primary);
             }
             
             textarea {
                 width: 100%;
                 min-height: 150px;
                 padding: 15px;
-                border: 2px solid #e0e0e0;
+                border: 2px solid var(--border-color);
                 border-radius: 10px;
                 font-size: 1em;
                 font-family: inherit;
                 resize: vertical;
                 transition: border-color 0.3s, box-shadow 0.3s;
+                background: var(--input-bg);
+                color: var(--text-primary);
             }
             
             textarea:focus {
@@ -435,17 +488,26 @@ def home():
                 background: #e0e0e0;
             }
             
+            [data-theme="dark"] .clear-btn {
+                background: #2a2a40;
+                color: #bbb;
+            }
+            
+            [data-theme="dark"] .clear-btn:hover {
+                background: #3a3a50;
+            }
+            
             .examples {
                 margin-top: 30px;
                 padding: 25px;
-                background: #f8f9fa;
+                background: var(--upload-bg);
                 border-radius: 15px;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+                box-shadow: 0 3px 10px var(--shadow);
             }
             
             .examples h3 {
                 margin-bottom: 20px;
-                color: #333;
+                color: var(--text-primary);
                 text-align: center;
                 font-size: 1.2em;
             }
@@ -457,13 +519,13 @@ def home():
             }
             
             .example-card {
-                background: white;
+                background: var(--card-bg);
                 border: 2px solid #667eea;
                 border-radius: 12px;
                 padding: 20px;
                 cursor: pointer;
                 transition: all 0.3s;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+                box-shadow: 0 3px 10px var(--shadow);
             }
             
             .example-card:hover {
@@ -477,8 +539,9 @@ def home():
                 transform: scale(1.1);
             }
             
+            .example-card:hover .example-title,
             .example-card:hover .example-desc {
-                color: rgba(255,255,255,0.9);
+                color: white;
             }
             
             .example-icon {
@@ -491,13 +554,13 @@ def home():
                 font-weight: 700;
                 font-size: 1.1em;
                 margin-bottom: 8px;
+                color: var(--text-primary);
             }
             
             .example-desc {
                 font-size: 0.9em;
-                color: #666;
+                color: var(--text-secondary);
                 line-height: 1.4;
-                transition: color 0.3s;
             }
             
             .verification-badge {
@@ -541,15 +604,15 @@ def home():
             }
             
             .risk-comparison {
-                background: white;
+                background: var(--card-bg);
                 padding: 25px;
                 border-radius: 15px;
                 margin-bottom: 20px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                box-shadow: 0 5px 15px var(--shadow);
             }
             
             .risk-comparison h3 {
-                color: #333;
+                color: var(--text-primary);
                 margin-bottom: 15px;
                 text-align: center;
             }
@@ -592,11 +655,11 @@ def home():
             }
             
             .challenge-card {
-                background: white;
+                background: var(--card-bg);
                 border-radius: 15px;
                 padding: 30px;
                 margin-bottom: 20px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                box-shadow: 0 5px 15px var(--shadow);
                 border-left: 5px solid #667eea;
             }
             
@@ -606,12 +669,12 @@ def home():
                 align-items: center;
                 margin-bottom: 20px;
                 padding-bottom: 15px;
-                border-bottom: 2px solid #f0f0f0;
+                border-bottom: 2px solid var(--border-color);
             }
             
             .challenge-title {
                 font-size: 1.5em;
-                color: #333;
+                color: var(--text-primary);
                 font-weight: 700;
             }
             
@@ -645,7 +708,7 @@ def home():
                 font-size: 1.1em;
                 font-weight: 600;
                 margin-bottom: 10px;
-                color: #555;
+                color: var(--text-primary);
             }
             
             .section-title::before {
@@ -667,7 +730,7 @@ def home():
                 padding-left: 25px;
                 position: relative;
                 line-height: 1.6;
-                color: #555;
+                color: var(--text-secondary);
             }
             
             .challenge-list li::before {
@@ -702,14 +765,14 @@ def home():
             }
             
             .summary {
-                background: #f8f9fa;
+                background: var(--upload-bg);
                 padding: 20px;
                 border-radius: 10px;
                 margin-bottom: 20px;
             }
             
             .summary h2 {
-                color: #333;
+                color: var(--text-primary);
                 margin-bottom: 10px;
             }
             
@@ -735,7 +798,7 @@ def home():
             .toast {
                 position: fixed;
                 top: 20px;
-                right: 20px;
+                right: 80px;
                 background: white;
                 padding: 15px 25px;
                 border-radius: 10px;
@@ -743,6 +806,11 @@ def home():
                 z-index: 1000;
                 animation: slideIn 0.3s ease-out;
                 max-width: 400px;
+            }
+            
+            [data-theme="dark"] .toast {
+                background: var(--card-bg);
+                color: var(--text-primary);
             }
             
             .toast.error {
@@ -801,16 +869,25 @@ def home():
                 button {
                     width: 100%;
                 }
+                
+                .theme-toggle {
+                    top: 10px;
+                    right: 10px;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1.2em;
+                }
             }
         </style>
     </head>
     <body>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
+        
         <div class="container">
             <div class="header">
                 <h1>🔍 Data Paradox Agent</h1>
                 <p class="tagline">Challenge your marketing analytics — with your actual data</p>
                 
-                <!-- NEW: What This Does Explainer -->
                 <div class="explainer">
                     <ul class="explainer-list">
                         <li>Upload CSV → Test claims → Get instant fallacy flags</li>
@@ -834,7 +911,6 @@ def home():
                 </div>
             </div>
             
-            <!-- Demo Video Section -->
             <div class="demo-section">
                 <h3>📺 See It In Action (20 seconds)</h3>
                 <video autoplay loop muted playsinline>
@@ -843,7 +919,6 @@ def home():
                 </video>
             </div>
             
-            <!-- How It Works -->
             <div class="how-it-works">
                 <h3>⚡ How It Works</h3>
                 <div class="steps-grid">
@@ -923,7 +998,6 @@ def home():
                     </div>
                 </div>
                 
-                <!-- NEW: Bigger Example Cards -->
                 <div class="examples">
                     <h3>📝 Try These Examples (Click to Auto-Analyze)</h3>
                     <div class="examples-grid">
@@ -965,6 +1039,27 @@ def home():
             
             let datasetLoaded = false;
             let currentMode = 'single';
+            
+            // Dark Mode Toggle
+            function toggleTheme() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            }
+            
+            // Load saved theme on page load
+            (function() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                if (document.getElementById('themeToggle')) {
+                    document.getElementById('themeToggle').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+            })();
             
             function showToast(message, type = 'info') {
                 const toast = document.createElement('div');
@@ -1194,7 +1289,7 @@ def home():
                                 </div>
                                 <div class="section">
                                     <div class="section-title">📝 What This Means</div>
-                                    <p style="color: #666;">${challenge.description}</p>
+                                    <p style="color: var(--text-secondary);">${challenge.description}</p>
                                 </div>
                                 <div class="section">
                                     <div class="section-title">🟡 Constructive Questions</div>
@@ -1279,7 +1374,7 @@ def home():
                                     <div class="confidence-badge confidence-${challenge.confidence.toLowerCase()}">${challenge.confidence}</div>
                                 </div>
                                 <div class="section">
-                                    <p style="color: #666;">${challenge.description}</p>
+                                    <p style="color: var(--text-secondary);">${challenge.description}</p>
                                 </div>
                             </div>
                         `;
@@ -1299,7 +1394,7 @@ def home():
                                     <div class="confidence-badge confidence-${challenge.confidence.toLowerCase()}">${challenge.confidence}</div>
                                 </div>
                                 <div class="section">
-                                    <p style="color: #666;">${challenge.description}</p>
+                                    <p style="color: var(--text-secondary);">${challenge.description}</p>
                                 </div>
                             </div>
                         `;
