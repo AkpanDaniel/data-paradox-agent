@@ -63,27 +63,62 @@ def home():
             }
             
             .header h1 {
-                font-size: 3em;
+                font-size: 3.5em;
                 margin-bottom: 15px;
                 text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+                font-weight: 800;
             }
             
             .header .tagline {
-                font-size: 1.3em;
+                font-size: 1.4em;
                 opacity: 0.95;
-                margin-bottom: 20px;
+                margin-bottom: 25px;
+                font-weight: 500;
+            }
+            
+            .explainer {
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 20px 30px;
+                margin: 0 auto 20px auto;
+                max-width: 700px;
+                color: white;
+            }
+            
+            .explainer-list {
+                list-style: none;
+                padding: 0;
+            }
+            
+            .explainer-list li {
+                padding: 8px 0;
+                padding-left: 30px;
+                position: relative;
+                font-size: 1.05em;
+                line-height: 1.5;
+            }
+            
+            .explainer-list li::before {
+                content: '✓';
+                position: absolute;
+                left: 0;
+                font-weight: bold;
+                font-size: 1.3em;
+                color: #4ade80;
             }
             
             .value-prop {
                 background: rgba(255, 255, 255, 0.15);
                 backdrop-filter: blur(10px);
                 border-radius: 15px;
-                padding: 25px;
-                margin: 20px auto 30px auto;
+                padding: 20px;
+                margin: 15px auto 30px auto;
                 max-width: 800px;
                 color: white;
                 line-height: 1.6;
-                font-size: 1.1em;
+                font-size: 1em;
+                text-align: center;
             }
             
             .badges {
@@ -198,18 +233,21 @@ def home():
             }
             
             .upload-section {
-                background: #f8f9fa;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
                 border: 2px dashed #667eea;
                 border-radius: 15px;
                 padding: 30px;
                 margin-bottom: 30px;
                 text-align: center;
                 transition: all 0.3s;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             }
             
             .upload-section:hover {
                 border-color: #764ba2;
-                background: #f0f0f0;
+                background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             }
             
             .upload-section h3 {
@@ -248,11 +286,12 @@ def home():
                 font-size: 1.1em;
                 cursor: pointer;
                 display: inline-block;
-                transition: transform 0.2s;
+                transition: transform 0.2s, box-shadow 0.2s;
             }
             
             .upload-btn:hover {
                 transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
             }
             
             .data-summary {
@@ -262,6 +301,7 @@ def home():
                 margin-bottom: 20px;
                 border-radius: 10px;
                 display: none;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.05);
             }
             
             .data-summary.active {
@@ -344,12 +384,13 @@ def home():
                 font-size: 1em;
                 font-family: inherit;
                 resize: vertical;
-                transition: border-color 0.3s;
+                transition: border-color 0.3s, box-shadow 0.3s;
             }
             
             textarea:focus {
                 outline: none;
                 border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             }
             
             .button-container {
@@ -395,36 +436,68 @@ def home():
             }
             
             .examples {
-                margin-top: 20px;
-                padding: 20px;
+                margin-top: 30px;
+                padding: 25px;
                 background: #f8f9fa;
-                border-radius: 10px;
+                border-radius: 15px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.05);
             }
             
             .examples h3 {
-                margin-bottom: 15px;
+                margin-bottom: 20px;
                 color: #333;
+                text-align: center;
+                font-size: 1.2em;
             }
             
-            .example-btn {
-                display: inline-block;
-                margin: 5px;
-                padding: 10px 20px;
+            .examples-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 15px;
+            }
+            
+            .example-card {
                 background: white;
                 border: 2px solid #667eea;
-                border-radius: 8px;
+                border-radius: 12px;
+                padding: 20px;
                 cursor: pointer;
-                font-size: 0.95em;
-                font-weight: 600;
-                transition: all 0.2s;
-                color: #667eea;
+                transition: all 0.3s;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             }
             
-            .example-btn:hover {
-                background: #667eea;
+            .example-card:hover {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 color: white;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            }
+            
+            .example-card:hover .example-icon {
+                transform: scale(1.1);
+            }
+            
+            .example-card:hover .example-desc {
+                color: rgba(255,255,255,0.9);
+            }
+            
+            .example-icon {
+                font-size: 2em;
+                margin-bottom: 10px;
+                transition: transform 0.3s;
+            }
+            
+            .example-title {
+                font-weight: 700;
+                font-size: 1.1em;
+                margin-bottom: 8px;
+            }
+            
+            .example-desc {
+                font-size: 0.9em;
+                color: #666;
+                line-height: 1.4;
+                transition: color 0.3s;
             }
             
             .verification-badge {
@@ -658,6 +731,77 @@ def home():
             .footer a:hover {
                 border-bottom-color: white;
             }
+            
+            .toast {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+                max-width: 400px;
+            }
+            
+            .toast.error {
+                border-left: 4px solid #ef5350;
+            }
+            
+            .toast.success {
+                border-left: 4px solid #4caf50;
+            }
+            
+            .toast.info {
+                border-left: 4px solid #2196F3;
+            }
+            
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            /* Mobile Responsiveness */
+            @media (max-width: 768px) {
+                .header h1 {
+                    font-size: 2.5em;
+                }
+                
+                .comparison-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .comparison-results {
+                    grid-template-columns: 1fr;
+                }
+                
+                .risk-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .steps-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .examples-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .button-container {
+                    flex-direction: column;
+                }
+                
+                button {
+                    width: 100%;
+                }
+            }
         </style>
     </head>
     <body>
@@ -666,9 +810,16 @@ def home():
                 <h1>🔍 Data Paradox Agent</h1>
                 <p class="tagline">Challenge your marketing analytics — with your actual data</p>
                 
+                <!-- NEW: What This Does Explainer -->
+                <div class="explainer">
+                    <ul class="explainer-list">
+                        <li>Upload CSV → Test claims → Get instant fallacy flags</li>
+                        <li>Compare two strategies with risk scoring</li>
+                        <li>No signup, no BS — built for performance marketers</li>
+                    </ul>
+                </div>
+                
                 <div class="value-prop">
-                    <strong>Stop trusting misleading marketing metrics.</strong><br>
-                    Upload your campaign CSV → Make a claim → Get fact-checked AND logic-checked instantly.<br>
                     <em>Most analytics tools confirm your bias. This one challenges it.</em>
                 </div>
                 
@@ -722,7 +873,7 @@ def home():
             <div class="main-card">
                 <div class="upload-section">
                     <h3>📊 Upload Your Dataset (Optional but Recommended)</h3>
-                    <p>Upload your marketing data CSV to validate claims against actual data</p>
+                    <p>Best with: date, platform, spend, revenue, clicks, impressions, conversions</p>
                     <div class="file-input-wrapper">
                         <div class="upload-btn">📁 Choose CSV File</div>
                         <input type="file" id="csvFile" accept=".csv" onchange="handleFileUpload(event)">
@@ -772,11 +923,28 @@ def home():
                     </div>
                 </div>
                 
+                <!-- NEW: Bigger Example Cards -->
                 <div class="examples">
-                    <h3>📝 Try These Examples (Click to Auto-Analyze):</h3>
-                    <button class="example-btn" onclick="loadExampleAndAnalyze(1)">🚀 ROAS Reallocation</button>
-                    <button class="example-btn" onclick="loadExampleAndAnalyze(2)">📈 CTR-CPA Correlation</button>
-                    <button class="example-btn" onclick="loadExampleAndAnalyze(3)">🎯 Platform Attribution</button>
+                    <h3>📝 Try These Examples (Click to Auto-Analyze)</h3>
+                    <div class="examples-grid">
+                        <div class="example-card" onclick="loadExampleAndAnalyze(1)">
+                            <div class="example-icon">🚀</div>
+                            <div class="example-title">ROAS Reallocation</div>
+                            <div class="example-desc">Shifting budget to highest-ROAS channel boosts total profit?</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExampleAndAnalyze(2)">
+                            <div class="example-icon">📈</div>
+                            <div class="example-title">CTR-CPA Correlation</div>
+                            <div class="example-desc">Higher CTR always means better CPA performance?</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExampleAndAnalyze(3)">
+                            <div class="example-icon">🎯</div>
+                            <div class="example-title">Platform Attribution</div>
+                            <div class="example-desc">View-through windows accurately show channel contribution?</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -797,6 +965,18 @@ def home():
             
             let datasetLoaded = false;
             let currentMode = 'single';
+            
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
             
             function switchMode(mode) {
                 currentMode = mode;
@@ -830,6 +1010,7 @@ def home():
             
             function loadExampleAndAnalyze(num) {
                 loadExample(num);
+                showToast('Example loaded! Analyzing...', 'info');
                 setTimeout(() => analyzeClaim(), 100);
             }
             
@@ -846,6 +1027,11 @@ def home():
             async function handleFileUpload(event) {
                 const file = event.target.files[0];
                 if (!file) return;
+                
+                if (!file.name.endsWith('.csv')) {
+                    showToast('Please upload a CSV file', 'error');
+                    return;
+                }
                 
                 const formData = new FormData();
                 formData.append('file', file);
@@ -866,11 +1052,14 @@ def home():
                     if (data.success) {
                         datasetLoaded = true;
                         displayDataSummary(data);
+                        showToast('Dataset loaded successfully!', 'success');
                     } else {
                         summaryContent.innerHTML = `<p style="color: red;">❌ ${data.error}</p>`;
+                        showToast(data.error, 'error');
                     }
                 } catch (error) {
                     summaryContent.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+                    showToast('Failed to upload file', 'error');
                 }
             }
             
@@ -905,7 +1094,7 @@ def home():
                 const claim = document.getElementById('claim').value.trim();
                 
                 if (!claim) {
-                    alert('Please enter a claim to analyze!');
+                    showToast('Please paste a claim to analyze (or try an example above)', 'error');
                     return;
                 }
                 
@@ -927,8 +1116,13 @@ def home():
                     
                     const data = await response.json();
                     displayResults(data);
+                    
+                    if (!datasetLoaded) {
+                        showToast('💡 Tip: Upload your CSV for data verification too!', 'info');
+                    }
                 } catch (error) {
                     resultsDiv.innerHTML = `<div class="main-card"><p style="color: red;">Error: ${error.message}</p></div>`;
+                    showToast('Analysis failed. Please try again.', 'error');
                 } finally {
                     analyzeBtn.disabled = false;
                 }
@@ -939,7 +1133,7 @@ def home():
                 const claimB = document.getElementById('claimB').value.trim();
                 
                 if (!claimA || !claimB) {
-                    alert('Please enter both claims to compare!');
+                    showToast('Please enter both claims to compare', 'error');
                     return;
                 }
                 
@@ -964,6 +1158,7 @@ def home():
                     displayComparisonResults(data);
                 } catch (error) {
                     resultsDiv.innerHTML = `<div class="main-card"><p style="color: red;">Error: ${error.message}</p></div>`;
+                    showToast('Comparison failed. Please try again.', 'error');
                 } finally {
                     analyzeBtn.disabled = false;
                 }
