@@ -1,4 +1,4 @@
-# 🔍 Data Paradox Agent
+# Data Paradox Agent
 
 **An AI-powered tool that challenges your marketing analytics claims — using your actual data.**
 
@@ -71,7 +71,7 @@ RECOMMENDATION: Test incrementally before scaling
 ### Backend
 - **Python/Flask** - Web server
 - **Pattern Matching Engine** - Rule-based fallacy detection
-- - **Polars** - CSV processing and data analysis (high-performance alternative to Pandas)
+- **Pandas** - CSV processing and data analysis
 
 ### Frontend  
 - **Vanilla JavaScript** - No frameworks, fast and lightweight
@@ -209,7 +209,7 @@ Built by **Akpan Daniel** as a portfolio project demonstrating:
 
 ##  Contact
 
- **GitHub:** [https://github.com/AkpanDaniel/data-paradox-agent]
+- **GitHub:** [https://github.com/AkpanDaniel]
 - **LinkedIn:** [https://www.linkedin.com/in/akpan-daniel-b09a1b1a1/]
 - **Email:** [alviva91@gmail.com]
 

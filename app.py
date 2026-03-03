@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import sys
 import os
 
@@ -19,7 +21,46 @@ except ImportError:
 app = Flask(__name__, static_folder='static')
 CORS(app)
 
+# Rate Limiting
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
+
 generator = ChallengeGenerator()
+
+# Security Headers
+@app.after_request
+def add_security_headers(response):
+    """Add security headers to all responses"""
+    response.headers['Content-Security-Policy'] = "default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; media-src 'self' blob:"
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
+
+def sanitize_csv(file_content):
+    """Validate and sanitize CSV uploads"""
+    # Check file size (max 50MB)
+    if len(file_content) > 50 * 1024 * 1024:
+        raise ValueError("File too large (max 50MB)")
+    
+    # Decode and check for dangerous patterns
+    try:
+        text = file_content.decode('utf-8')
+    except:
+        raise ValueError("Invalid CSV encoding - must be UTF-8")
+    
+    # Block potentially dangerous content
+    dangerous_patterns = ['<script', 'javascript:', 'data:text/html', '<?php', '<iframe', 'onerror=']
+    for pattern in dangerous_patterns:
+        if pattern.lower() in text.lower():
+            raise ValueError("File contains potentially dangerous content")
+    
+    return file_content
 
 @app.route('/static/<path:filename>')
 def serve_static(filename):
@@ -366,7 +407,7 @@ def home():
             
             .platform-stats {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmin(200px, 1fr));
                 gap: 15px;
                 margin-top: 15px;
             }
@@ -904,8 +945,8 @@ def home():
                     <a href="https://github.com/AkpanDaniel/data-paradox-agent" target="_blank" class="badge">
                         ⭐ View on GitHub
                     </a>
-                    <a href="https://github.com/AkpanDaniel/data-paradox-agent" target="_blank" class="badge">
-                        📖 Read Documentation
+                    <a href="https://github.com/AkpanDaniel/data-paradox-agent/blob/main/SECURITY.md" target="_blank" class="badge">
+                        🔒 Security Policy
                     </a>
                     <span class="badge">🚀 100% Free & Open Source</span>
                 </div>
@@ -948,7 +989,7 @@ def home():
             <div class="main-card">
                 <div class="upload-section">
                     <h3>📊 Upload Your Dataset (Optional but Recommended)</h3>
-                    <p>Best with: date, platform, spend, revenue, clicks, impressions, conversions</p>
+                    <p>Best with: date, platform, spend, revenue, clicks, impressions, conversions (Max: 50MB)</p>
                     <div class="file-input-wrapper">
                         <div class="upload-btn">📁 Choose CSV File</div>
                         <input type="file" id="csvFile" accept=".csv" onchange="handleFileUpload(event)">
@@ -1026,7 +1067,7 @@ def home():
             
             <div class="footer">
                 Built with 💜 by <a href="https://github.com/AkpanDaniel" target="_blank">Akpan Daniel</a><br>
-                © 2026 Data Paradox Agent | <a href="https://github.com/AkpanDaniel/data-paradox-agent" target="_blank">Open Source on GitHub</a>
+                © 2026 Data Paradox Agent | <a href="https://github.com/AkpanDaniel/data-paradox-agent" target="_blank">Open Source on GitHub</a> | <a href="https://github.com/AkpanDaniel/data-paradox-agent/blob/main/SECURITY.md" target="_blank">Security</a>
             </div>
         </div>
         
@@ -1125,6 +1166,11 @@ def home():
                 
                 if (!file.name.endsWith('.csv')) {
                     showToast('Please upload a CSV file', 'error');
+                    return;
+                }
+                
+                if (file.size > 50 * 1024 * 1024) {
+                    showToast('File too large (max 50MB)', 'error');
                     return;
                 }
                 
@@ -1412,8 +1458,9 @@ def home():
     """
 
 @app.route('/api/upload', methods=['POST'])
+@limiter.limit("20 per hour")
 def upload_csv():
-    """Handle CSV file upload."""
+    """Handle CSV file upload with security validation"""
     if not DATA_UPLOAD_ENABLED:
         return jsonify({'success': False, 'error': 'CSV upload not available'}), 503
     
@@ -1427,20 +1474,31 @@ def upload_csv():
     if not file.filename.endswith('.csv'):
         return jsonify({'success': False, 'error': 'File must be a CSV'}), 400
     
-    csv_content = file.read()
-    result = analyzer.load_csv(csv_content)
-    
-    return jsonify(result)
+    try:
+        csv_content = file.read()
+        # Sanitize CSV before processing
+        sanitized_content = sanitize_csv(csv_content)
+        result = analyzer.load_csv(sanitized_content)
+        return jsonify(result)
+    except ValueError as e:
+        return jsonify({'success': False, 'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Failed to process CSV'}), 500
 
 @app.route('/api/analyze', methods=['POST'])
+@limiter.limit("10 per minute")
 def analyze():
-    """API endpoint to analyze claims."""
+    """API endpoint to analyze claims"""
     data = request.get_json()
     claim = data.get('claim', '')
     validate_data = data.get('validate_data', False)
     
     if not claim:
         return jsonify({'error': 'No claim provided'}), 400
+    
+    # Basic input validation
+    if len(claim) > 10000:
+        return jsonify({'error': 'Claim too long (max 10,000 characters)'}), 400
     
     response = generator.generate_challenges(claim)
     
@@ -1451,8 +1509,9 @@ def analyze():
     return jsonify(response)
 
 @app.route('/api/compare', methods=['POST'])
+@limiter.limit("10 per minute")
 def compare():
-    """API endpoint to compare two claims."""
+    """API endpoint to compare two claims"""
     data = request.get_json()
     claim_a = data.get('claim_a', '')
     claim_b = data.get('claim_b', '')
@@ -1460,6 +1519,10 @@ def compare():
     
     if not claim_a or not claim_b:
         return jsonify({'error': 'Both claims required'}), 400
+    
+    # Basic input validation
+    if len(claim_a) > 10000 or len(claim_b) > 10000:
+        return jsonify({'error': 'Claims too long (max 10,000 characters each)'}), 400
     
     comparison = generator.compare_claims(claim_a, claim_b)
     
@@ -1472,7 +1535,7 @@ def compare():
 @app.route('/health')
 def health():
     """Health check endpoint for Render"""
-    return jsonify({'status': 'healthy', 'version': '1.0.0'}), 200
+    return jsonify({'status': 'healthy', 'version': '1.0.1', 'security': 'enabled'}), 200
 
 if __name__ == '__main__':
     print("\n" + "=" * 60)
@@ -1480,7 +1543,13 @@ if __name__ == '__main__':
     print("=" * 60)
     print("\n✅ Server starting...")
     print("📱 Open your browser and go to: http://localhost:5000")
-    print("\n💡 CSV Upload & Comparison Enabled!")
+    print("\n💡 Features Enabled:")
+    print("   - CSV Upload & Validation")
+    print("   - Claim Comparison")
+    print("   - Dark Mode")
+    print("   - Security Headers")
+    print("   - Rate Limiting")
+    print("   - Input Sanitization")
     print("\n Press Ctrl+C to stop the server\n")
     print("=" * 60 + "\n")
     
